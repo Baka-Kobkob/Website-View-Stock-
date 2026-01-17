@@ -1,86 +1,109 @@
 <!DOCTYPE html>
-<html lang="km">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - BlueStore</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root { --primary: #007bff; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; --text: #1e293b; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
-        .header { background: var(--white); padding: 20px 5%; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--white); padding: 25px; border-radius: 16px; border: 1px solid var(--border); display: flex; align-items: center; gap: 20px; }
-        .stat-icon { width: 55px; height: 55px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: #f0f7ff; color: var(--primary); }
-        .card { background: var(--white); border-radius: 20px; border: 1px solid var(--border); padding: 30px; margin-bottom: 25px; }
-        .price-row { display: grid; grid-template-columns: 2fr 1fr 60px; gap: 15px; margin-bottom: 12px; }
-        input { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; }
-        .btn { padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-add { background: var(--white); color: var(--primary); border: 2px dashed var(--primary); width: 100%; margin-top: 10px; }
-        .btn-save { background: var(--primary); color: white; width: 100%; font-size: 1.1rem; padding: 18px; margin-top: 20px; }
-        .btn-del { background: #fff1f2; color: #ef4444; }
-    </style>
+    <title>Admin Panel | Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header class="header">
-        <h1 style="color: var(--primary); font-size: 1.3rem;"><i class="fas fa-user-shield"></i> Admin Control</h1>
-    </header>
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                <div class="stat-info"><h3>ចំនួនលក់បាន</h3><p id="totalOrders">0</p></div>
+<body class="bg-slate-50 p-6">
+    <div class="max-w-2xl mx-auto space-y-6">
+        
+        <div class="bg-white p-8 rounded-[30px] shadow-sm border">
+            <h1 class="text-2xl font-black text-blue-600 mb-6 uppercase italic">Admin Settings</h1>
+            
+            <div class="mb-8">
+                <label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Logo Text</label>
+                <input type="text" id="logo-input" class="w-full p-4 bg-slate-50 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500" placeholder="ឧទាហរណ៍: BLUE">
             </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="color:#10b981; background:#ecfdf5;"><i class="fas fa-wallet"></i></div>
-                <div class="stat-info"><h3>ចំណូលសរុប</h3><p id="totalRevenue">$0.00</p></div>
+
+            <hr class="mb-8">
+
+            <h2 class="font-bold text-slate-700 mb-4">គ្រប់គ្រងកញ្ចប់ Diamond</h2>
+            
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <input type="number" id="add-amount" placeholder="ចំនួន Diamond" class="p-4 bg-slate-50 border rounded-2xl outline-none">
+                <input type="number" step="0.01" id="add-price" placeholder="តម្លៃ ($)" class="p-4 bg-slate-50 border rounded-2xl outline-none">
+                <button onclick="addPriceLocal()" class="col-span-2 bg-blue-600 text-white py-4 rounded-2xl font-bold hover:bg-blue-700 transition">បន្ថែមចូលបញ្ជី</button>
             </div>
+
+            <div id="price-list-admin" class="space-y-2 mb-8">
+                </div>
+
+            <button onclick="saveAllToDB()" class="w-full bg-green-500 text-white py-5 rounded-[25px] font-black text-lg shadow-lg shadow-green-200 active:scale-95 transition">
+                SAVE TO DATABASE
+            </button>
         </div>
-        <div class="card">
-            <label>ឈ្មោះ Logo:</label>
-            <input type="text" id="logoText">
-            <input type="password" id="adminKey" value="112233" style="display:none;">
-        </div>
-        <div class="card">
-            <div id="priceEditor"></div>
-            <button class="btn btn-add" onclick="addNewRow()">+ ថែមកញ្ចប់ពេជ្រ</button>
-        </div>
-        <button class="btn btn-save" onclick="saveAll()">រក្សាទុក និង Update ទៅ Website A</button>
+
     </div>
+
     <script>
-        let pricesArray = [];
-        async function loadData() {
-            const stats = await (await fetch('/api/orders/summary')).json();
-            document.getElementById('totalOrders').innerText = stats.totalOrders;
-            document.getElementById('totalRevenue').innerText = "$" + stats.totalRevenue;
-            const config = await (await fetch('/api/config')).json();
-            document.getElementById('logoText').value = config.logoText;
-            pricesArray = config.prices || [];
-            renderRows();
+        const API_URL = "https://website-view-stock.vercel.app/api";
+        let localPrices = [];
+
+        // ១. ទាញទិន្នន័យចាស់មកបង្ហាញ
+        async function fetchCurrentConfig() {
+            const res = await fetch(`${API_URL}/config`);
+            const data = await res.json();
+            document.getElementById('logo-input').value = data.logoText || "NEXTOPUP";
+            localPrices = data.prices || [];
+            renderList();
         }
-        function renderRows() {
-            const container = document.getElementById('priceEditor');
-            container.innerHTML = pricesArray.map((p, i) => `
-                <div class="price-row">
-                    <input type="text" value="${p.amt}" onchange="pricesArray[${i}].amt=this.value">
-                    <input type="number" value="${p.prc}" onchange="pricesArray[${i}].prc=this.value" step="0.01">
-                    <button class="btn btn-del" onclick="pricesArray.splice(${i},1);renderRows()"><i class="fas fa-trash"></i></button>
+
+        // ២. បន្ថែមតម្លៃទៅក្នុង List បណ្តោះអាសន្ន
+        function addPriceLocal() {
+            const amount = document.getElementById('add-amount').value;
+            const price = document.getElementById('add-price').value;
+            if(!amount || !price) return alert("សូមបំពេញឱ្យគ្រប់!");
+
+            localPrices.push({ amount, price });
+            renderList();
+
+            document.getElementById('add-amount').value = "";
+            document.getElementById('add-price').value = "";
+        }
+
+        // ៣. លុបចេញពី List
+        function removePrice(index) {
+            localPrices.splice(index, 1);
+            renderList();
+        }
+
+        // ៤. បង្ហាញបញ្ជីក្នុង UI
+        function renderList() {
+            const container = document.getElementById('price-list-admin');
+            container.innerHTML = localPrices.map((p, i) => `
+                <div class="flex justify-between items-center p-4 bg-slate-50 border rounded-2xl">
+                    <span class="font-bold text-slate-700">${p.amount} 💎 = $${p.price}</span>
+                    <button onclick="removePrice(${i})" class="text-red-500 font-bold text-xs uppercase">លុប</button>
                 </div>
             `).join('');
         }
-        function addNewRow() { pricesArray.push({ amt: "100 💎", prc: 1.00 }); renderRows(); }
-        async function saveAll() {
-            await fetch('/api/admin/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ logoText: document.getElementById('logoText').value, prices: pricesArray, adminKey: "112233" })
+
+        // ៥. ផ្ញើទិន្នន័យទាំងអស់ទៅរក្សាទុកក្នុង MongoDB
+        async function saveAllToDB() {
+            const logo = document.getElementById('logo-input').value;
+            
+            const payload = {
+                adminKey: "112233",
+                logoText: logo,
+                prices: localPrices
+            };
+
+            const res = await fetch(`${API_URL}/admin/update`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
             });
-            alert("Updated! ✅");
+
+            if(res.ok) {
+                alert("រក្សាទុកជោគជ័យ! តម្លៃនឹងបង្ហាញត្រឹមត្រូវនៅ Home Page។");
+            } else {
+                alert("បរាជ័យ! សូមពិនិត្យ Admin Key។");
+            }
         }
-        window.onload = loadData;
+
+        fetchCurrentConfig();
     </script>
 </body>
 </html>
