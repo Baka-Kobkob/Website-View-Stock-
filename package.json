@@ -1,11 +1,9 @@
 {
-  "name": "bot-website-combined",
-  "version": "1.0.0",
-  "main": "index.js",
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^7.0.0",
     "cors": "^2.8.5",
+    "socket.io": "^4.7.2",
     "path": "^0.12.7"
   }
 }
