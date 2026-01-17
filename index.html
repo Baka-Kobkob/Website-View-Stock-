@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Futuristic Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a); 
+            color: white; min-height: 100vh; font-family: 'Inter', sans-serif;
+        }
+        .glass { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .glow { text-shadow: 0 0 15px #3b82f6; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-10 text-center md:text-left">
+            <h1 class="text-4xl font-black tracking-tighter glow text-blue-400">COMMAND CENTER</h1>
+            <p class="text-gray-500 text-sm mt-1 uppercase tracking-widest">User & Balance Real-time Monitoring</p>
+        </header>
+        
+        <div class="glass rounded-3xl overflow-hidden shadow-2xl">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-white/5 text-blue-300 text-xs uppercase tracking-widest">
+                        <th class="p-5 font-bold">Identity</th>
+                        <th class="p-5 font-bold">Username</th>
+                        <th class="p-5 font-bold text-right">Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list" class="divide-y divide-white/5">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/users');
+                const users = await res.json();
+                const list = document.getElementById('user-list');
+                list.innerHTML = users.map(user => `
+                    <tr class="hover:bg-white/5 transition-all duration-300">
+                        <td class="p-5 font-mono text-gray-400 text-sm">#${user.telegram_id}</td>
+                        <td class="p-5 font-semibold text-white">@${user.username || 'Anonymous'}</td>
+                        <td class="p-5 text-right font-bold text-green-400">$${user.balance.toFixed(2)}</td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error("Error fetching users", e); }
+        }
+        setInterval(loadUsers, 3000);
+        loadUsers();
+    </script>
+</body>
+</html>
