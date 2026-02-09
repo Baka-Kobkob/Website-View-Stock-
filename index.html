@@ -3,221 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vannak | Elite Full-Stack Customizer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Duty Manager Pro - Advanced Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --color1: #1e5799;
-            --color2: #00d2ff;
-            --bg: #f0f4f8;
-            --text: #333;
+            --primary: #0062cc;
+            --success: #28a745;
+            --danger: #dc3545;
+            --bg: #f8f9fa;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
-
-        /* --- Header បែប Two-Tone Gradient --- */
-        header {
-            background: linear-gradient(135deg, var(--color1), var(--color2));
-            color: white; padding: 100px 20px; text-align: center;
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+        body {
+            font-family: 'Hanuman', serif;
+            background: var(--bg);
+            margin: 0; padding: 15px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        .profile-container {
-            width: 160px; height: 160px; margin: 0 auto 20px;
-            border: 6px solid rgba(255,255,255,0.3); border-radius: 50%;
-            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
+        .container { width: 100%; max-width: 900px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- Section Styling --- */
-        .container { max-width: 1200px; margin: -50px auto 50px; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        
-        .card { 
-            background: white; padding: 30px; border-radius: 20px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-top: 5px solid var(--color1);
+        .card {
+            background: white; border-radius: 16px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 20px;
         }
 
-        /* --- Admin Dashboard Button --- */
-        .admin-btn {
-            position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px;
-            background: var(--color1); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 2000; font-size: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        .moul { font-family: 'Moul', cursive; color: var(--primary); text-align: center; margin: 0 0 20px 0; }
+
+        /* ផ្នែកបន្ថែមសមាជិក ឡូយៗ */
+        .member-list-container {
+            background: #fdfdfd; border: 1.5px dashed #cbd5e0;
+            padding: 15px; border-radius: 12px; margin: 15px 0;
         }
 
-        /* --- Full-Screen Settings Panel --- */
-        .settings-panel {
-            position: fixed; top: 0; left: -100%; width: 100%; height: 100%;
-            background: white; z-index: 3000; transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
-            overflow-y: auto; padding: 40px 10px;
-        }
-        .settings-panel.active { left: 0; }
-        .close-settings { position: absolute; top: 20px; right: 20px; font-size: 2rem; cursor: pointer; color: var(--color1); }
-
-        .form-content { max-width: 600px; margin: 0 auto; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--color1); }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 1rem; }
-        
-        .color-inputs { display: flex; gap: 10px; }
-        .color-inputs input { height: 50px; cursor: pointer; }
-
-        .btn-update { 
-            background: linear-gradient(to right, var(--color1), var(--color2));
-            color: white; border: none; padding: 15px; width: 100%; 
-            border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+        .member-item {
+            display: flex; gap: 10px; margin-bottom: 10px;
+            align-items: center; animation: slideDown 0.3s ease;
         }
 
-        /* Project Card */
-        .proj-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .proj-card img { width: 100%; height: 200px; object-fit: cover; }
-        .proj-body { padding: 15px; }
+        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        footer { text-align: center; padding: 50px; background: #fff; color: #999; font-size: 0.8rem; }
+        input, select {
+            padding: 10px 15px; border: 1.5px solid #e2e8f0;
+            border-radius: 10px; font-family: 'Hanuman'; outline: none; transition: 0.2s;
+        }
+
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,98,204,0.1); }
+
+        .btn-add {
+            background: white; color: var(--success); border: 2px solid var(--success);
+            width: 100%; padding: 12px; border-radius: 12px; cursor: pointer;
+            font-weight: bold; font-size: 16px; transition: 0.3s; margin-bottom: 10px;
+        }
+        .btn-add:hover { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(40,167,69,0.2); }
+
+        .btn-delete {
+            background: #fff5f5; color: var(--danger); border: 1.5px solid var(--danger);
+            width: 40px; height: 40px; border-radius: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        /* តារាង PDF */
+        #pdf-content {
+            background: white; width: 210mm; padding: 15mm;
+            box-sizing: border-box; display: block; border: 1px solid #ddd;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; }
+        th, td { border: 1.2px solid #333; padding: 8px 4px; text-align: center; font-size: 11pt; }
+        th { background: #eef2f7; color: #cc0000; }
+        .role-col { text-align: left !important; background: #f9f9f9; font-weight: bold; width: 110px; }
+
+        .day-tabs { display: flex; overflow-x: auto; gap: 8px; margin-bottom: 15px; padding: 5px; scrollbar-width: none; }
+        .day-btn { padding: 10px 20px; border: none; border-radius: 50px; background: #e2e8f0; cursor: pointer; font-weight: bold; white-space: nowrap; }
+        .day-btn.active { background: var(--primary); color: white; }
+
+        .sticky-footer { position: sticky; bottom: 15px; display: flex; gap: 10px; width: 100%; max-width: 900px; }
+        .btn-main { flex: 1; padding: 15px; border-radius: 12px; border: none; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-    <div class="admin-btn" onclick="toggleAdmin()"><i class="fas fa-tools"></i></div>
-
-    <div class="settings-panel" id="adminPanel">
-        <i class="fas fa-times close-settings" onclick="toggleAdmin()"></i>
-        <div class="form-content">
-            <h1 style="margin-bottom: 30px; text-align: center; color: var(--color1);">មជ្ឈមណ្ឌលគ្រប់គ្រង</h1>
-            
-            <div class="form-group">
-                <label>រចនាពណ៌ Gradient (២ ពណ៌)</label>
-                <div class="color-inputs">
-                    <input type="color" id="c1" value="#1e5799">
-                    <input type="color" id="c2" value="#00d2ff">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>ប្តូររូប Profile (ពីទូរសព្ទ)</label>
-                <input type="file" accept="image/*" onchange="uploadProfile(event)">
-            </div>
-
-            <div class="form-group">
-                <label>ឈ្មោះអាជីព</label>
-                <input type="text" id="nameInput">
-            </div>
-
-            <div class="form-group">
-                <label>ជំនាញ/តួនាទី</label>
-                <input type="text" id="roleInput">
-            </div>
-
-            <hr style="margin: 30px 0;">
-            <h3>បន្ថែមគម្រោងថ្មី</h3>
-            <div class="form-group">
-                <label>ឈ្មោះគម្រោង</label>
-                <input type="text" id="pTitle">
-            </div>
-            <div class="form-group">
-                <label>រូបភាពគម្រោង (ពីទូរសព្ទ)</label>
-                <input type="file" accept="image/*" onchange="uploadProj(event)">
-            </div>
-
-            <button class="btn-update" onclick="applyChanges()">រក្សាទុក និងអាប់ដេតវេបសាយ</button>
+<div class="container">
+    <div class="card">
+        <h2 class="moul" style="font-size: 20px;">រៀបចំបញ្ជីឈ្មោះវេន</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="mainLeader" placeholder="ឈ្មោះប្រធានកាយរិទ្ធិ">
+            <input type="text" id="weekRange" placeholder="សម្រាប់សប្តាហ៍ថ្ងៃទី...">
+            <input type="text" id="v1" placeholder="អនុប្រធានទី១">
+            <input type="text" id="v2" placeholder="អនុប្រធានទី២">
         </div>
+
+        <div class="day-tabs">
+            <button class="day-btn active" onclick="switchDay('mon', this)">ច័ន្ទ</button>
+            <button class="day-btn" onclick="switchDay('tue', this)">អង្គារ</button>
+            <button class="day-btn" onclick="switchDay('wed', this)">ពុធ</button>
+            <button class="day-btn" onclick="switchDay('thu', this)">ព្រហស្បតិ៍</button>
+            <button class="day-btn" onclick="switchDay('fri', this)">សុក្រ</button>
+            <button class="day-btn" onclick="switchDay('sat', this)">សៅរ៍</button>
+        </div>
+
+        <div class="member-list-container" id="memberList">
+            </div>
+        
+        <button class="btn-add" onclick="addNewMember()">+ បន្ថែមសមាជិកថ្មី</button>
     </div>
 
-    <header id="mainHeader">
-        <div class="profile-container">
-            <img id="pImg" src="https://via.placeholder.com/160" alt="Profile">
+    <div id="pdf-content">
+        <div style="text-align: center;">
+            <div class="moul" style="font-size: 18pt;">ព្រះរាជាណាចក្រកម្ពុជា</div>
+            <div style="color: blue; font-weight: bold; font-size: 14pt;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+            <div style="margin-top: 15px; font-size: 11pt;">ប្រធានកាយរិទ្ធិ</div>
+            <div class="moul" id="outLeader" style="font-size: 18pt; margin-top: 5px;">..........</div>
         </div>
-        <h1 id="pName">វ៉ា វណ្ណៈ</h1>
-        <p id="pRole">Full-Stack Developer</p>
-    </header>
 
-    <div class="container">
-        <div class="grid" id="projectList">
+        <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 10pt; font-weight: bold; color: blue;">
+            <div>
+                អនុប្រធានទី១៖ <span id="outV1">...</span><br>
+                អនុប្រធានទី២៖ <span id="outV2">...</span>
             </div>
+            <div id="outDate">សប្តាហ៍៖ ...</div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="color: black;">តួនាទី</th>
+                    <th>ច័ន្ទ</th>
+                    <th>អង្គារ</th>
+                    <th>ពុធ</th>
+                    <th>ព្រហស្បតិ៍</th>
+                    <th>សុក្រ</th>
+                    <th>សៅរ៍</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
     </div>
+</div>
 
-    <footer>
-        <p>© ២០២៦ វ៉ា វណ្ណៈ - Managed by Elite Dashboard</p>
-    </footer>
+<div class="sticky-footer">
+    <button class="btn-main" style="background: var(--primary);" onclick="saveAndPreview()">រក្សាទុក & បង្ហាញ</button>
+    <button class="btn-main" style="background: var(--danger);" onclick="downloadPDF()">ទាញយក PDF</button>
+</div>
 
-    <script>
-        // រក្សាទុកទិន្នន័យក្នុង LocalStorage
-        let store = JSON.parse(localStorage.getItem('v-data')) || {
-            c1: '#1e5799', c2: '#00d2ff',
-            name: 'វ៉ា វណ្ណៈ', role: 'Full-Stack Developer',
-            profile: 'https://via.placeholder.com/160',
-            projects: []
-        };
+<script>
+    let appData = JSON.parse(localStorage.getItem('dutyApp')) || {
+        header: { leader: '', v1: '', v2: '', date: '' },
+        schedule: { mon:[], tue:[], wed:[], thu:[], fri:[], sat:[] }
+    };
+    let currentDay = 'mon';
 
-        let tempProjImg = "";
+    function init() {
+        document.getElementById('mainLeader').value = appData.header.leader;
+        document.getElementById('v1').value = appData.header.v1;
+        document.getElementById('v2').value = appData.header.v2;
+        document.getElementById('weekRange').value = appData.header.date;
+        renderInputs();
+        renderTable();
+    }
 
-        function toggleAdmin() { document.getElementById('adminPanel').classList.toggle('active'); }
-
-        // មុខងារបញ្ចូលរូបភាពពីទូរសព្ទ
-        function uploadProfile(e) {
-            const reader = new FileReader();
-            reader.onload = () => store.profile = reader.result;
-            reader.readAsDataURL(e.target.files[0]);
+    function renderInputs() {
+        const list = document.getElementById('memberList');
+        list.innerHTML = '';
+        const data = appData.schedule[currentDay];
+        if (data.length === 0) { addNewMember(); } 
+        else {
+            data.forEach((m, idx) => addNewMember(m.name, m.role));
         }
+    }
 
-        function uploadProj(e) {
-            const reader = new FileReader();
-            reader.onload = () => tempProjImg = reader.result;
-            reader.readAsDataURL(e.target.files[0]);
-        }
+    function addNewMember(name = '', role = 3) {
+        const div = document.createElement('div');
+        div.className = 'member-item';
+        div.innerHTML = `
+            <input type="text" class="m-name" style="flex:2" placeholder="ឈ្មោះសមាជិក" value="${name}">
+            <select class="m-role" style="flex:1">
+                <option value="1" ${role==1?'selected':''}>ប្រធាន</option>
+                <option value="2" ${role==2?'selected':''}>អនុប្រធាន</option>
+                <option value="3" ${role==3?'selected':''}>សមាជិក</option>
+            </select>
+            <button class="btn-delete" onclick="this.parentElement.remove()">✕</button>
+        `;
+        document.getElementById('memberList').appendChild(div);
+    }
 
-        // អនុវត្តការផ្លាស់ប្តូរ
-        function applyChanges() {
-            store.c1 = document.getElementById('c1').value;
-            store.c2 = document.getElementById('c2').value;
-            store.name = document.getElementById('nameInput').value || store.name;
-            store.role = document.getElementById('roleInput').value || store.role;
+    function switchDay(day, btn) {
+        saveToData();
+        currentDay = day;
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderInputs();
+    }
 
-            if(tempProjImg) {
-                store.projects.push({ title: document.getElementById('pTitle').value, img: tempProjImg });
-                tempProjImg = ""; document.getElementById('pTitle').value = "";
+    function saveToData() {
+        const names = document.querySelectorAll('.m-name');
+        const roles = document.querySelectorAll('.m-role');
+        let dayData = [];
+        names.forEach((n, i) => {
+            if(n.value.trim() !== "") {
+                dayData.push({ name: n.value, role: parseInt(roles[i].value) });
             }
+        });
+        dayData.sort((a, b) => a.role - b.role);
+        appData.schedule[currentDay] = dayData;
+        
+        appData.header = {
+            leader: document.getElementById('mainLeader').value,
+            v1: document.getElementById('v1').value,
+            v2: document.getElementById('v2').value,
+            date: document.getElementById('weekRange').value
+        };
+        localStorage.setItem('dutyApp', JSON.stringify(appData));
+    }
 
-            localStorage.setItem('v-data', JSON.stringify(store));
-            renderSite();
-            toggleAdmin();
-            alert("អាប់ដេតបានជោគជ័យ!");
+    function saveAndPreview() {
+        saveToData();
+        renderTable();
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function renderTable() {
+        document.getElementById('outLeader').innerText = appData.header.leader || "..........";
+        document.getElementById('outV1').innerText = appData.header.v1 || "...";
+        document.getElementById('outV2').innerText = appData.header.v2 || "...";
+        document.getElementById('outDate').innerText = "សប្តាហ៍៖ " + (appData.header.date || "...");
+
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        const labels = ["ប្រធានក្រុម", "អនុប្រធាន", "សមាជិក", "សមាជិក", "សមាជិក", "សមាជិក", "សមាជិក", "សមាជិក"];
+        
+        let maxRows = 5;
+        ['mon','tue','wed','thu','fri','sat'].forEach(d => {
+            if(appData.schedule[d].length > maxRows) maxRows = appData.schedule[d].length;
+        });
+
+        for(let i=0; i < maxRows; i++) {
+            let row = `<tr><td class="role-col">${i+1}. ${labels[i] || 'សមាជិក'}</td>`;
+            ['mon','tue','wed','thu','fri','sat'].forEach(d => {
+                let m = appData.schedule[d][i];
+                let color = m?.role == 1 ? 'color:red; font-weight:bold;' : (m?.role == 2 ? 'color:blue; font-weight:bold;' : '');
+                row += `<td style="${color}">${m ? m.name : ''}</td>`;
+            });
+            row += `</tr>`;
+            tbody.innerHTML += row;
         }
+    }
 
-        function renderSite() {
-            document.documentElement.style.setProperty('--color1', store.c1);
-            document.documentElement.style.setProperty('--color2', store.c2);
-            document.getElementById('pName').innerText = store.name;
-            document.getElementById('pRole').innerText = store.role;
-            document.getElementById('pImg').src = store.profile;
+    function downloadPDF() {
+        saveAndPreview();
+        const element = document.getElementById('pdf-content');
+        html2pdf().from(element).set({
+            margin: 0,
+            filename: 'Duty_Schedule.pdf',
+            html2canvas: { scale: 3 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).save();
+    }
 
-            const list = document.getElementById('projectList');
-            list.innerHTML = store.projects.map((p, i) => `
-                <div class="proj-card">
-                    <img src="${p.img}">
-                    <div class="proj-body">
-                        <h4>${p.title}</h4>
-                        <button onclick="delProj(${i})" style="color:red; margin-top:10px; border:none; background:none; cursor:pointer;">លុប</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function delProj(i) {
-            store.projects.splice(i, 1);
-            localStorage.setItem('v-data', JSON.stringify(store));
-            renderSite();
-        }
-
-        // ទាញទិន្នន័យចាស់មកដាក់ក្នុង Input
-        document.getElementById('c1').value = store.c1;
-        document.getElementById('c2').value = store.c2;
-        document.getElementById('nameInput').value = store.name;
-        document.getElementById('roleInput').value = store.role;
-
-        renderSite();
-    </script>
+    init();
+</script>
 </body>
-    </html>
+        </html>
